@@ -109,7 +109,7 @@ public class GUI extends JFrame{
 
         try {
             BufferedImage img = ImageIO.read(new File("src/images/" +
-                    "notAvaliable.jpg"));
+                    "notAvailable.jpg"));
             ImageIcon icon = new ImageIcon(img);
             ImageIcon newIcon = ImageScaler.scaleImage(icon);
             pictureArea = new JLabel(newIcon);

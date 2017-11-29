@@ -9,6 +9,13 @@ import java.awt.*;
  */
 public class ImageScaler {
 
+    /**
+     * A static method to be used from anywhere by any method to resize an
+     * ImageIcon.
+     *
+     * @param icon ImageIcon to resize
+     * @return ImageIcon , Resized icon.
+     */
     public static synchronized ImageIcon scaleImage(ImageIcon icon) {
 
         int width = icon.getIconWidth();
