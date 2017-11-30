@@ -1,5 +1,6 @@
 import Controller.Controller;
 import Controller.AutoUpdate;
+import Model.ImageHandler;
 import Model.XMLParser;
 import View.GUI;
 import javax.swing.*;
@@ -19,7 +20,9 @@ public class RadioInfo {
 
     public static void main(String[] args) throws Exception {
 
-        XMLParser parser = new XMLParser("http://api.sr.se/api/v2/channels");
+        ImageHandler imageHandler = new ImageHandler();
+        XMLParser parser = new XMLParser();
+        parser.parseStream("http://api.sr.se/api/v2/channels");
         parser.channelData = parser.collectChannels();
 
         SwingUtilities.invokeLater(new Runnable() {

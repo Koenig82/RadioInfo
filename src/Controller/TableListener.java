@@ -38,6 +38,7 @@ public class TableListener implements MouseListener{
                         .getValueAt(target.getSelectedRow(), 1);
                 Program prog = controller.parser.getProgramByChannelIdAndStart
                         (controller.parser.activeChannelId, dt);
+                prog.getProgramImage();
                 return prog;
             }
 

@@ -1,7 +1,7 @@
 package View;
 
 import Model.Channel;
-import Model.ImageScaler;
+import Model.ImageHandler;
 import Model.Program;
 
 import javax.imageio.ImageIO;
@@ -111,7 +111,7 @@ public class GUI extends JFrame{
             BufferedImage img = ImageIO.read(new File("src/images/" +
                     "notAvailable.jpg"));
             ImageIcon icon = new ImageIcon(img);
-            ImageIcon newIcon = ImageScaler.scaleImage(icon);
+            ImageIcon newIcon = ImageHandler.scaleImage(icon);
             pictureArea = new JLabel(newIcon);
         } catch (IOException e) {
             e.printStackTrace();
@@ -210,7 +210,6 @@ public class GUI extends JFrame{
                 for(Program p : channel.programs){
                     tableModel.addRow(new Object[]{p.name, p.start, p.end});
                     renderRedCells(table);
-
                 }
                 pictureArea.setIcon(channel.image);
                 info.setText(channel.description);

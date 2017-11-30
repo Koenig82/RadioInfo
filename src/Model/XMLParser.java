@@ -1,6 +1,9 @@
 package Model;
 
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.imageio.ImageIO;
@@ -9,7 +12,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -37,53 +39,21 @@ public class XMLParser {
     private ArrayList<LocalDate> days;
 
     /**
-     * Constructor method for XMLParser. The constructor method does an
-     * initial parse of the argument string. The parser uses a
-     * DocumentBuilderFactory to produce an object tree. The object tree
-     * is accessible through the Document "doc" variable.
-     *
-     * @param url String with url to radio API
+     * Constructor method for XMLParser. Initializes needed resources.
      */
-    public XMLParser(String url) throws Exception {
-        BufferedImage temp = null;
+    public XMLParser() throws Exception {
+
         days = new ArrayList<>();
-        try {
-            temp = ImageIO.read(new File("src/images/"
-                    + "notAvailable.jpg"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if(temp != null){
-            notAvailable = new ImageIcon(temp);
-            notAvailable = ImageScaler.scaleImage(notAvailable);
-
-        }else{
-            throw new Exception("Unable to load default image");
-        }
-
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        try {
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            doc = dBuilder.parse(new URL(url).openStream());
-        } catch (ParserConfigurationException e) {
-            System.err.println("Error configuring parser");
-            e.printStackTrace();
-        } catch (SAXException e) {
-            System.err.println("Error parsing");
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.err.println("IO Error during parsing");
-            e.printStackTrace();
-        }
-
     }
 
     /**
-     * This method parses the XML document at a given url.
+     * This method parses the XML document at a given url. The parser uses a
+     * DocumentBuilderFactory to produce an object tree, stored in the "doc"
+     * variable.
      *
      * @param url String with url to XML page
      */
-    private void parseStream(String url){
+    public void parseStream(String url){
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         try {
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -138,7 +108,7 @@ public class XMLParser {
                     ImageIcon icon = convertToIcon(image);
                     if(icon != null){
                         channelData.get(id).image =
-                                ImageScaler.scaleImage(icon);
+                                ImageHandler.scaleImage(icon);
                     }
                 }
             }
@@ -170,29 +140,6 @@ public class XMLParser {
         }
     }
 
-    /**
-     * This method is used by addProgram() to assign an image to a
-     * program from its image url.
-     *
-     * @param element , A parsed program element
-     * @return BufferedImage , The collected image (null when error)
-     * @throws IOException , Exception thrown when image could not be loaded.
-     * @throws MalformedURLException , Exeption thrown when url is malformed
-     */
-    private BufferedImage getProgramImage(Element element) throws Exception{
-        BufferedImage image = null;
-        try{
-            URL url = new URL(element.getElementsByTagName("imageurl").item(0)
-                    .getTextContent());
-            image = ImageIO.read(url);
-            return image;
-        } catch (MalformedURLException e) {
-            throw new Exception("Malformed url when collecting " +
-                    "Program image");
-        } catch (IOException e) {
-            throw new Exception("Problem getting a program image");
-        }
-    }
 
     /**
      * This method updates the program table with information from a channel
@@ -287,21 +234,15 @@ public class XMLParser {
                         .getElementsByTagName("title")
                         .item(0).getTextContent(), startDate,
                         endDate);
-                program.description = element.getElementsByTagName
-                        ("description").item(0).
-                        getTextContent();
 
-                BufferedImage image = null;
-                ImageIcon icon = null;
-                try {
-                    image = getProgramImage(element);
-                } catch (Exception e) {
-                    System.err.println(e.getMessage());
-                }finally {
-                    icon = convertToIcon(image);
-                    program.image = icon;
-                    channel.programs.add(program);
+                if(element.getElementsByTagName("description").item(0) != null){
+                    program.description = element.getElementsByTagName("description").item(0).getTextContent();
                 }
+
+                if(element.getElementsByTagName("imageurl").item(0) != null){
+                    program.imageUrl = element.getElementsByTagName("imageurl").item(0).getTextContent();
+                }
+                channel.programs.add(program);
             }
         }
     }
@@ -327,7 +268,7 @@ public class XMLParser {
 
     /**
      * This method converts a BufferedImage to an ImageIcon. It uses a
-     * static method from the ImageScaler class.
+     * static method from the ImageHandler class.
      *
      * @param image BufferedImage to convert
      * @return ImageIcon , The converted image(standard image if unavailable)
@@ -336,7 +277,7 @@ public class XMLParser {
         ImageIcon icon;
         if(image!=null){
             icon = new ImageIcon(image);
-            icon = ImageScaler.scaleImage(icon);
+            icon = ImageHandler.scaleImage(icon);
         }else{
             icon = notAvailable;
         }
