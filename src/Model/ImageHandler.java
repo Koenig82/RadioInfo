@@ -63,7 +63,7 @@ public class ImageHandler {
      * @return ImageIcon , The converted image(standard image if unavailable)
      */
     public static synchronized ImageIcon convertToIcon(BufferedImage image){
-        ImageIcon icon = null;
+        ImageIcon icon;
         if(image!=null){
             icon = new ImageIcon(image);
             icon = scaleImage(icon);

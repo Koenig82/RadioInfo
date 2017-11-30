@@ -34,7 +34,7 @@ public class Channel{
      * @throws IOException , Exception thrown when image could not be loaded.
      * @throws MalformedURLException , Exeption thrown when url is malformed
      */
-    private void getChannelImage()throws Exception{
+    public void getChannelImage()throws Exception{
         BufferedImage image;
         try{
             URL url = new URL(imageUrl);

@@ -6,14 +6,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,8 +29,6 @@ public class XMLParser {
 
     public LinkedHashMap<Integer, Channel> channelData;
     public int activeChannelId = 0;
-
-    private ImageIcon notAvailable;
 
     private ArrayList<LocalDate> days;
 
@@ -94,50 +88,19 @@ public class XMLParser {
                     int id = Integer.parseInt(element.getAttribute("id"));
 
                     String name = element.getAttribute("name");
-                    String desc = element.getElementsByTagName
-                            ("channeltype").item(0).getTextContent();
 
                     channelData.put(id, new Channel(name, id));
-                    channelData.get(id).description = desc;
-                    BufferedImage image = null;
-                    try{
-                        image = getChannelImage(element);
-                    }catch(Exception e){
-                        System.err.println(e.getMessage());
+
+                    if(element.getElementsByTagName("channeltype").item(0) != null){
+                        channelData.get(id).description = element.getElementsByTagName("channeltype").item(0).getTextContent();
                     }
-                    ImageIcon icon = convertToIcon(image);
-                    if(icon != null){
-                        channelData.get(id).image =
-                                ImageHandler.scaleImage(icon);
+                    if(element.getElementsByTagName("image").item(0) != null){
+                        channelData.get(id).imageUrl = element.getElementsByTagName("image").item(0).getTextContent();
                     }
                 }
             }
         }
         return channelData;
-    }
-
-    /**
-     * This method is used by collectChannels() to assign an image to a
-     * channel from its image url.
-     *
-     * @param element , A parsed channel element
-     * @return BufferedImage , The collected image (null when error)
-     * @throws IOException , Exception thrown when image could not be loaded.
-     * @throws MalformedURLException , Exeption thrown when url is malformed
-     */
-    private BufferedImage getChannelImage(Element element)throws Exception{
-        BufferedImage image = null;
-        try{
-            URL url = new URL(element.getElementsByTagName("image").item(0)
-                    .getTextContent());
-            image = ImageIO.read(url);
-            return image;
-        } catch (MalformedURLException e) {
-            throw new MalformedURLException("Malformed url when collecting " +
-                    "station image");
-        } catch (IOException e) {
-            throw new IOException("Problem getting the station image");
-        }
     }
 
 
@@ -169,7 +132,6 @@ public class XMLParser {
                 + channel.id + "&date="+days.get(0));
         int totalPages = Integer.parseInt(doc.getElementsByTagName
                 ("totalpages").item(0).getTextContent());
-        System.out.println(totalPages);
         NodeList parsedPrograms;
         for (int page = 1; page <= totalPages; page++){
 
@@ -190,13 +152,9 @@ public class XMLParser {
                 + channel.id + "&date="+days.get(1));
         totalPages = Integer.parseInt(doc.getElementsByTagName
                 ("totalpages").item(0).getTextContent());
-        System.out.println(totalPages);
         for (int page = 1; page <= totalPages; page++){
 
             this.parseStream("http://api.sr" +
-                    ".se/v2/scheduledepisodes?channelid="
-                    + channel.id +"&date="+days.get(1)+"&page="+page);
-            System.out.println("http://api.sr" +
                     ".se/v2/scheduledepisodes?channelid="
                     + channel.id +"&date="+days.get(1)+"&page="+page);
             parsedPrograms = doc.getElementsByTagName
@@ -264,23 +222,5 @@ public class XMLParser {
             }
         }
         return null;
-    }
-
-    /**
-     * This method converts a BufferedImage to an ImageIcon. It uses a
-     * static method from the ImageHandler class.
-     *
-     * @param image BufferedImage to convert
-     * @return ImageIcon , The converted image(standard image if unavailable)
-     */
-    private ImageIcon convertToIcon(BufferedImage image){
-        ImageIcon icon;
-        if(image!=null){
-            icon = new ImageIcon(image);
-            icon = ImageHandler.scaleImage(icon);
-        }else{
-            icon = notAvailable;
-        }
-        return icon;
     }
 }

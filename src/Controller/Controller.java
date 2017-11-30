@@ -41,6 +41,7 @@ public class Controller {
 
                             parser.updateSchedule(parser.channelData.get(
                                     j.channelMapValue));
+                            parser.channelData.get(j.channelMapValue).getChannelImage();
                             return null;
                         }
 
