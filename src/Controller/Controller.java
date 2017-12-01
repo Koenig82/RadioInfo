@@ -37,7 +37,7 @@ public class Controller {
                     SwingWorker<Void,Void> worker = new SwingWorker<
                             Void, Void>() {
                         @Override
-                        protected Void doInBackground() throws Exception {
+                        protected synchronized Void doInBackground() throws Exception {
 
                             parser.updateSchedule(parser.channelData.get(
                                     j.channelMapValue));
@@ -46,7 +46,7 @@ public class Controller {
                         }
 
                         @Override
-                        protected void done() {
+                        protected synchronized void done() {
                             gui.updateTable( parser.channelData.get(
                                     j.channelMapValue));
                         }

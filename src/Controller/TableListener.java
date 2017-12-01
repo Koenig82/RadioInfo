@@ -32,7 +32,7 @@ public class TableListener implements MouseListener{
 
         SwingWorker<Program,Void> worker = new SwingWorker<Program, Void>() {
             @Override
-            protected Program doInBackground() throws Exception {
+            protected synchronized Program doInBackground() throws Exception {
 
                 LocalDateTime dt = (LocalDateTime)((JTable) e.getSource())
                         .getValueAt(target.getSelectedRow(), 1);
@@ -45,7 +45,7 @@ public class TableListener implements MouseListener{
 
 
             @Override
-            protected void done() {
+            protected synchronized void done() {
                 Program p = null;
                 try {
                     p = get();

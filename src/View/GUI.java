@@ -50,8 +50,6 @@ public class GUI extends JFrame{
     private static final int FRAME_WIDTH = 1000;
     private static final int FRAME_HEIGHT = 500;
 
-    //private ChannelData data;
-
     public ArrayList<JMenuItem> channelSelects;
     public ArrayList<JButtonInt> channelSelect;
 
@@ -94,7 +92,7 @@ public class GUI extends JFrame{
         lowerLeftUp = new JPanel();
         lowerLeftUp.setLayout(new FlowLayout(FlowLayout.CENTER,100,0));
         lowerLeft.setBorder(BorderFactory.createTitledBorder
-                ("Channel & Program information"));
+                ("Channel / Program   information"));
 
         lowerLeft.add(lowerLeftUp, BorderLayout.NORTH);
 
@@ -126,6 +124,7 @@ public class GUI extends JFrame{
         infoScroll.setPreferredSize(new Dimension(450,
                 50));
         lowerLeftBottom.add(infoScroll, BorderLayout.CENTER);
+        info.setEditable(false);
 
         //adding channel list to upper left
         channels = new JPanel();
@@ -152,6 +151,7 @@ public class GUI extends JFrame{
         Object[][] rows = {};
         tableModel = new DefaultTableModel(rows ,colNames);
         table = new JTable(tableModel);
+        table.setDefaultEditor(Object.class, null);
         JScrollPane scrollPane = new JScrollPane(table);
         panelRight.add(scrollPane);
         table.setFillsViewportHeight(true);
@@ -202,7 +202,6 @@ public class GUI extends JFrame{
      * @param channel Channel, The Channel object to update program info from.
      */
     public void updateTable(Channel channel){
-        //invokelater
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
